@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>sql工具</title>
+<script src="../js/lib/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/tools/sqltool.js"></script>
+<script type="text/javascript" src="../js/tools/pagedatacache.js"></script>
+<script type="text/javascript" src="../js/tools/mybatissqlbuild.js"></script>
+<style type="text/css">
+	.out{
+    	width: 1200px;
+    	margin-left: auto;
+    	margin-right: auto;
+    	margin-top: 60px;
+    }
+    
+	.content{
+		padding: 10px;
+	}
+	
+	select{
+		width: 100px;
+		height: 30px;
+	}
+	
+	button{
+    	background:#03a9f5;
+    	color:#ffffff;
+    	width:100px;
+    	height:30px;
+    	border-radius: 6px;
+    	margin-bottom: 0;
+    	margin-top:10px;
+    	text-align: center;
+    	cursor: pointer;
+    	border: 1px solid transparent;
+    	float: right;
+    }
+    
+    .checkbox{
+    	zoom:200%;
+    }
+    
+    span{
+    	margin-right: 20px;
+    }
+</style>
+<script type="text/javascript">
+	//对mybatis的sql拼接
+	function mybatisFormate(sql_field){
+		var operate = $("#operate").val();
+		var framework = $('#framework').val();
+		if(framework == 'mybatis'){
+			operatekind(operate,sql_field);
+		}
+	}
+	
+	
+</script>
+</head>
+<body>
+	<div class="out">
+		<div style="height: 30px;">
+			`<span>url:<input id="jdbcurl" type="text"></span>
+			 <span>用户名：<input id="user" type="text"></span>
+			 <span>密码：<input id="password" type="password"></span>
+		</div>
+		<div style="height: 50px;">
+			<select id="framework">
+				<option value="sql">普通sql</option>
+				<option value="mybatis">mybatis</option>
+			</select>
+			<select id="dbtype">
+				<option value="mysql">mysql</option>
+				<option value="oracle">oracle</option>
+			</select>
+			<select id="tables">
+			</select>
+			<select id="operate">
+				<option value="select">select</option>
+				<option value="insert">insert</option>
+				<option value="insertAll">insertAll</option>
+				<option value="delete">delete</option>
+				<option value="update">update</option>
+			</select>
+			<button id="excute" onclick="excute()">执行</button>
+		</div>
+		<div id="choose" style="display: none;">
+			<div id="usefield"></div>
+			<div id="conditional"></div>
+		</div>
+		<div id="paramtype_div" style="display: none;">
+			<select id="paramtype">
+				<option value="obj">object</option>
+				<option value="normal">normal</option>
+			</select>
+			<span><input id="objname" type="text" /></span>
+		</div>
+		<div style="display: inline-block;">
+			<div id="top">java类：</div>
+			<textarea rows="30" cols="77" class="content" id="javacontent"></textarea>
+		</div>
+		<div style="display: inline-block;">
+			<div id="top">sql语句：</div>
+			<textarea rows="30" cols="77" class="content" id="sqlcontent"></textarea>
+		</div>
+	</div>
+	<div style="display: none;" id="datacache"></div>
+</body>
+<script type="text/javascript">
+$(function(){
+	$("#tables").change(function(){
+		if($("#tables").val() != ""){
+			$("#usefield").empty();
+			$("#conditional").empty();
+			$("#javacontent").val('');
+			parsetable();
+		}
+	});
+	
+	$("#framework").change(function(){
+		if($("#framework").val() == "mybatis"){
+			$('#paramtype_div').show();
+		}else{
+			$('#paramtype_div').hide();
+		}
+	});
+	
+	$("#paramtype").change(function(){
+		if($("#paramtype").val() == "obj"){
+			$('#objname').show();
+		}else{
+			$('#objname').hide();
+		}
+	});
+	
+	$("#operate").change(function(){
+		tranToSqlFormate();
+	});
+});
+
+</script>
+</html>

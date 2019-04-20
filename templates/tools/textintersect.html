@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>文本交集</title>
+<script src="../js/lib/jquery-1.11.1.min.js"></script>
+<style type="text/css">
+	.out{
+    	width: 1300px;
+    	margin-left: auto;
+    	margin-right: auto;
+    	margin-top: 60px;
+    }
+    
+    .comparebody{
+    	display: inline-block;
+    }
+    
+	.content{
+		padding: 10px;
+	}
+	
+	button{
+    	background:#03a9f5;
+    	color:#ffffff;
+    	width:100px;
+    	height:30px;
+    	border-radius: 6px;
+    	margin-bottom: 0;
+    	margin-top:10px;
+    	text-align: center;
+    	cursor: pointer;
+    	border: 1px solid transparent;
+    	float: right;
+    }
+</style>
+<script type="text/javascript">
+	function intersect(){
+		var content1 = $("#content1").val();
+		var content2 = $("#content2").val();
+		var commonarray = [];
+		var array1 = content1.split('\n');
+		for(var num in array1){
+			//将/r替换掉
+			array1[num] = array1[num].replace(/\r/g, '');
+			//将空格替换掉
+			array1[num] = array1[num].replace(/\s/g, '');
+		}
+		var array2 = content2.split('\n');
+		var index = -1;
+		for(var num = 0;num < array2.length;num++){
+			//将/r替换掉
+			array2[num] = array2[num].replace(/\r/g, '');
+			//将空格替换掉
+			array2[num] = array2[num].replace(/\s/g, '');
+			index = array1.indexOf(array2[num]);
+			if(index > -1){
+				commonarray.push(array2[num]);
+				array1.splice(index,1);
+				array2.splice(num,1);
+				num--;
+			}
+		}
+		content1 = "";
+		for(var num in array1){
+			if(array1[num] != ""){
+				content1 += array1[num] + "\n";
+			}
+		}
+		content2 = "";
+		for(var num in array2){
+			if(array2[num] != ""){
+				content2 += array2[num] + "\n";
+			}
+		}
+		var commoncontent = "";
+		for(var num in commonarray){
+			if(commonarray[num] != ""){
+				commoncontent += commonarray[num] + "\n";
+			}
+		}
+		$("#content1").val(content1);
+		$("#content2").val(content2);
+		$("#commoncontent").val(commoncontent);
+		$("#common").show();
+	}
+</script>
+</head>
+<body>
+	<div  class="out">
+		<div class="comparebody">
+			<div>源数据</div>
+			<textarea rows="30" cols="85" class="content" id="content1"></textarea>
+		</div>
+		<div class="comparebody">
+			<div>比较数据</div>
+			<textarea rows="30" cols="85" class="content" id="content2"></textarea>
+		</div>
+		<div style="height: 40px;"><button onclick="intersect()">开始对比</button></div>
+		<div  id="common" style="display: none;">
+			<div>行交集</div>
+			<textarea rows="30" cols="85" class="content" id="commoncontent"></textarea>
+		</div>
+	</div>
+</body>
+</html>

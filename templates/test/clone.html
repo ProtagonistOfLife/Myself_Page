@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>jQuery克隆测试</title>
+<script src="../js/lib/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+	<a id="clone1" href="#" onclick="alert('clone1');">测试1</a>
+	<a id="clone2" href="#" onclick="alert('clone2');">测试2</a>
+	<div id="test">
+	</div>
+	<script type="text/javascript">
+		$(function(){
+			/* $("#clone1").after($("test").clone());
+			$("#clone2").after($("test").clone(true)); */
+			$("#test").append($("#clone1").clone());
+			$('#test').append($("#clone2").clone(true));//深度克隆，包含事件 
+		});
+	</script>
+</body>
+</html>

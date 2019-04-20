@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>字符统计</title>
+<script src="../js/lib/jquery-1.11.1.min.js"></script>
+<style type="text/css">
+	.out{
+    	width: 700px;
+    	margin-left: auto;
+    	margin-right: auto;
+    	margin-top: 60px;
+    }
+    
+	.content{
+		padding: 10px;
+	}
+	
+	button{
+    	background:#03a9f5;
+    	color:#ffffff;
+    	width:70px;
+    	height:30px;
+    	margin-left:10px;
+    	border-radius: 6px;
+    	margin-bottom: 0;
+    	margin-top:10px;
+    	text-align: center;
+    	cursor: pointer;
+    	border: 1px solid transparent;
+    	float: right;
+    }
+</style>
+<script type="text/javascript">
+	function encode(){
+		var content = $("#content").val();
+		var encodetype = $('#encodetype').val();
+		if(encodetype = 'urlEncode'){
+			content = encodeURIComponent(content);
+		}else{
+			content = null;
+		}
+		 $("#content").val(content);
+	}
+	
+	function decode(){
+		
+	}
+</script>
+</head>
+<body>
+	<div class="out">
+		<select id="charencode">
+			<option value="UTF-8">UTF-8</option>
+			<option value="GBK">GBK</option>
+		</select>
+		<select id="encodetype">
+			<option value="urlEncode">urlEncode</option>
+			<option value="base64">base64</option>
+		</select>
+		<input type="file">
+		<textarea rows="30" cols="85" class="content" id="content"></textarea>
+		<div style="height: 40px;">
+			<button onclick="encode()">编码</button>
+			<button onclick="decode()">解码</button>
+		</div>
+	</div>
+</body>
+</html>
