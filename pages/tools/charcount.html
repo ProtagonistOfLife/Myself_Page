@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>字符统计</title>
+<script src="../js/lib/jquery-1.11.1.min.js"></script>
+<script src="../js/tools/textoperate.js"></script>
+<style type="text/css">
+	.out{
+    	width: 700px;
+    	margin-left: auto;
+    	margin-right: auto;
+    	margin-top: 60px;
+    }
+    
+	.content{
+		padding: 10px;
+	}
+	
+	button{
+    	background:#03a9f5;
+    	color:#ffffff;
+    	width:100px;
+    	height:30px;
+    	border-radius: 6px;
+    	margin-bottom: 0;
+    	margin-top:10px;
+    	text-align: center;
+    	cursor: pointer;
+    	border: 1px solid transparent;
+    	float: right;
+    }
+    
+    .radio{
+    	zoom:150%;
+    }
+</style>
+<script type="text/javascript">
+	$(function(){
+		$(".radio").change(function(){
+			var checked = $("input[name='field']:checked").val();
+			if(checked == 'trim_words' || checked == 'trim_col'){
+				$('#keyContent').show();
+			}else{
+				$('#keyContent').hide();
+				count();
+			}
+		});
+	});
+
+	function count(){
+		var content = $("#content").val();
+		var words = $("#keyContent").val();
+		var checked = $("input[name='field']:checked").val();
+		if(checked == 'trim'){
+			content = trim(content);
+		}else if(checked == 'trim_line'){
+			content = trim_line(content);
+		}else if(checked == 'trim_commonline'){
+			content = trim_commonline(content);
+		}else if(checked == 'trim_words'){
+			content = trim_words(content,words);
+		}else if(checked == 'trim_col'){
+			content = trim_col(content);
+		}
+		$("#content").val(content);
+		$("#top").text("字符数：" + content.length);
+	}
+</script>
+</head>
+<body>
+	<div  class="out">
+		<div>
+			<input type="text" id="keyContent" style="display: none;">
+		</div>
+		<div>
+			<span><input type="radio" name="field" class="radio" value="trim">去除所有空格</span>
+			<span><input type="radio" name="field" class="radio" value="trim_line">去除每行空格</span>
+			<span><input type="radio" name="field" class="radio" value="trim_commonline">去除内容相同的行</span>
+			<span><input type="radio" name="field" class="radio" value="trim_words">去除指定的词语</span>
+		</div>
+		<div>
+			<span><input type="radio" name="field" class="radio" value="trim_col">去除每行指定列</span>
+		</div>
+		<div id="top">字符数：0</div>
+		<textarea rows="30" cols="85" class="content" id="content"></textarea>
+		<div style="height: 40px;"><button id="submit" onclick="count()">开始统计</button></div>
+	</div>
+</body>
+</html>
