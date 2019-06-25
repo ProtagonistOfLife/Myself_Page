@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
-    <title>地图显示</title>
+    <title>路线搜索</title>
     <style>
         html,
         body,
@@ -37,8 +37,7 @@
 <script src="/js/lib/jquery-1.11.1.min.js"></script>
 <!-- 加载地图JSAPI脚本 -->
 <script src="https://webapi.amap.com/maps?v=1.4.15&key=97b6b937c86e648240979aa228092ac5"></script>
-<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&amp;key=97b6b937c86e648240979aa228092ac5&amp;plugin=AMap.StationSearch"></script>
-<!-- <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=97b6b937c86e648240979aa228092ac5&plugin=AMap.Autocomplete"></script> -->
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=97b6b937c86e648240979aa228092ac5&plugin=AMap.Autocomplete,AMap.StationSearch"></script>
 </head>
 <body>
 <div id="container"></div>
@@ -150,9 +149,9 @@
     	}); */
     
   //输入提示
-  /*   var auto = new AMap.Autocomplete({
-        input: "stationKeyWords"
-    }); */
+    var auto = new AMap.Autocomplete({
+        input: "stationKeyWord"
+    }); 
     
     //清空marker标志节点，暂时不用
     function clear(){
