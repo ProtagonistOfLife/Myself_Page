@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <title>地图显示</title>
+    <style>
+        html,
+        body,
+        #container {
+          width: 100%;
+          height: 100%;
+        }
+        
+        .input-card-selfdef{
+		  display: flex;
+		  flex-direction: column;
+		  min-width: 0;
+		  word-wrap: break-word;
+		  background-color: #fff;
+		  background-clip: border-box;
+		  border-radius: .25rem;
+		  width: 22rem;
+		  border-width: 0;
+		  border-radius: 0.4rem;
+		  box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+		  position: fixed;
+		  top: 5rem;
+		  right: 1rem;
+		  -ms-flex: 1 1 auto;
+		  flex: 1 1 auto;
+		  padding: 0.75rem 1.25rem;
+        }
+    </style>
+<script src="/js/lib/jquery-1.11.1.min.js"></script>
+<!-- 加载地图JSAPI脚本 -->
+<script src="https://webapi.amap.com/maps?v=1.4.15&key=97b6b937c86e648240979aa228092ac5"></script>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&amp;key=97b6b937c86e648240979aa228092ac5&amp;plugin=AMap.StationSearch"></script>
+<!-- <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=97b6b937c86e648240979aa228092ac5&plugin=AMap.Autocomplete"></script> -->
+</head>
+<body>
+<div id="container"></div>
+<div id="tip" class="info" style="min-width:18rem;">查询结果：共1个相关站点</div>
+<div class="input-card-selfdef" style="width:18rem;">
+    <label style="color:grey">公交站点查询</label>
+    <div class="input-item">
+            <div class="input-item-prepend"><span class="input-item-text">站名</span></div>
+            <input id="stationKeyWord" type="text" placeholder="请输入地点。。。">
+    </div>
+    <input id="search" type="button" class="btn" value="查询">
+</div>
+<script>
+	var markerlist = [];
+
+    var map = new AMap.Map('container', {
+        resizeEnable: true, //是否监控地图容器尺寸变化
+        zoom:11, //初始化地图层级
+        center: [121.433452,29.336464] //初始化地图中心点
+    });
+    var marker = new AMap.Marker({
+        map:map,
+        position:[121.433452,29.336464],
+        label: {
+            offset: new AMap.Pixel(10, 10),//修改label相对于maker的位置
+            //content: "点击Marker打开高德地图"
+        } 
+    });
+    markerlist.push(marker);
+    
+    /* AMap.plugin(["AMap.StationSearch"], function() {
+    	  //实例化公交站点查询类
+    	  var station = new AMap.StationSearch({
+    	    pageIndex: 1, //页码，默认值为1
+    	    pageSize: 10, //单页显示结果条数，默认值为20，最大值为50
+    	    city: '010' //限定查询城市，可以是城市名（中文/中文全拼）、城市编码，默认值为『全国』
+    	  });
+    	  
+    	  station.search('东直门', function(status, result) {
+    		    //打印状态信息status和结果信息result
+    		    //status：complete 表示查询成功，no_data 为查询无结果，error 代表查询错误。
+    		    console.log(status, result);
+    		  });
+    }); */
+    
+    /*公交站点查询*/
+    function stationSearch() {
+    	for(var i in markerlist){
+	    	map.remove(markerlist[i]);
+    	}
+        var stationKeyWord  = document.getElementById('stationKeyWord').value
+        if(!stationKeyWord) return
+        //实例化公交站点查询类
+        var station = new AMap.StationSearch({
+            pageIndex: 1, //页码
+            pageSize: 60, //单页显示结果条数
+            city: '010'   //确定搜索城市
+        });
+        station.search(stationKeyWord, function(status, result) {
+            if (status === 'complete' && result.info === 'OK') {
+                stationSearch_CallBack(result);
+            } else {
+                document.getElementById('tip').innerHTML = JSON.stringify(result);
+            }
+        });
+    }
+    /*公交站点查询返回数据解析*/
+    function stationSearch_CallBack(searchResult) {
+        var stationArr = searchResult.stationInfo;
+        var searchNum = stationArr.length;
+        markerlist = [];
+        if (searchNum > 0) {
+            document.getElementById('tip').innerHTML = '查询结果：共' + searchNum + '个相关站点';
+            for (var i = 0; i < searchNum; i++) {
+                var marker = new AMap.Marker({
+                    icon:new AMap.Icon({
+                       image:'https://a.amap.com/jsapi_demos/static/resource/img/pin.png',
+                       size:new AMap.Size(32,32),
+                       imageSize:new AMap.Size(32,32)
+                    }),
+                    offset:new AMap.Pixel(-16,-32),
+                    position: stationArr[i].location,
+                    map: map,
+                    title: stationArr[i].name
+                });
+                marker.info = new AMap.InfoWindow({
+                    content: stationArr[i].name,
+                    offset: new AMap.Pixel(0, -30)
+                });
+                marker.on('mouseover', function(e) {
+                    e.target.info.open(map, e.target.getPosition())
+                })
+	            markerlist.push(marker);
+            }
+            map.setFitView();
+        }
+    } 
+    
+   /*  AMap.plugin('AMap.Autocomplete', function(){
+    	  // 实例化Autocomplete
+    	  var autoOptions = {
+    	    //city 限定城市，默认全国
+    	    city: '全国'
+    	  }
+    	  var autoComplete= new AMap.Autocomplete(autoOptions);
+    	  autoComplete.search(keyword, function(status, result) {
+    	    // 搜索成功时，result即是对应的匹配数据
+    	  })
+    	}); */
+    
+  //输入提示
+  /*   var auto = new AMap.Autocomplete({
+        input: "stationKeyWords"
+    }); */
+    
+    //清空marker标志节点，暂时不用
+    function clear(){
+    	var markers = document.getElementsByClassName("amap-markers")[0];
+   		var markersNode = markers.childNodes;
+    	if(markersNode.length > 0){
+    		while(markers.hasChildNodes()) //当div下还存在子节点时 循环继续
+    	    {
+    			markers.removeChild(markers.firstChild);
+    	    }
+    	}
+    }
+    document.getElementById('search').onclick = stationSearch;
+</script>
+</body>
+</html>
