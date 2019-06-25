@@ -19,14 +19,29 @@
     	float: right;
     }
     .out{
-    	width: 250px;
+    	width: 450px;
+    	height:300px;
     	margin-left: auto;
     	margin-right: auto;
     	margin-top: 150px;
     }
+    
+    #url{
+    	width: 400px;
+    }
+    
+    .url_span{
+    	display:inline-block;
+    	margin-bottom: 15px;
+    }
     </style>
     <script type="text/javascript" src="../js/lib/jquery-1.8.3.min.js"></script>
     <script type="text/javascript">
+    	$(function(){
+    		$.get("/pcw/comm/getcurrenturl",function(data){
+    			$("#current_url").text(data.data);
+    		});
+    	});
     	function submiturl() {
     		var url = "http://";
     		var input_val = $("#url").val();
@@ -35,8 +50,8 @@
     		}else{
     			url += input_val;
     		}
-    		$.get("/pcw/comm/seturl", {"url":url}, function(data){
-    			console.log(data);
+    		$.get("/pcw/comm/seturl", {"url":url},function(data){
+    			$("#current_url").text(input_val);
     		});
     		$("#url").val('');
 		}
@@ -44,6 +59,7 @@
 </head>
 <body>
 	<div class="out">
+		<span class="url_span">当前url：<span id="current_url"></span></span>
 		<div>
 			<input type="text" id="url">
 		</div>
