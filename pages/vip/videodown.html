@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>vip视频下载</title>
+<script src="../js/lib/jquery-1.11.1.min.js"></script>
+<style type="text/css">
+	.out{
+    	width: 700px;
+    	margin-left: auto;
+    	margin-right: auto;
+    	margin-top: 60px;
+    }
+    
+	.content{
+		padding: 10px;
+	}
+	
+	button{
+    	background:#03a9f5;
+    	color:#ffffff;
+    	width:140px;
+    	height:30px;
+    	margin-left:10px;
+    	border-radius: 6px;
+    	margin-bottom: 0;
+    	margin-top:10px;
+    	text-align: center;
+    	cursor: pointer;
+    	border: 1px solid transparent;
+    	float: right;
+    }
+</style>
+<script type="text/javascript">
+	function saveInServer(){
+		var content = $("#content").val();
+		var array = content.split("\n");
+		for(var num in array){
+			//将/r替换掉
+			array[num] = array[num].replace(/\r/g, '');
+			//将空格替换掉
+			array[num] = array[num].replace(/\s/g, '');
+			if(array[num] == ""){
+				array.splice(num,1);
+			}
+		}
+		if(content == ""){
+			alert("输入的内容不能为空！！");
+			return;
+		}
+		if($('#downtype').val() == ""){
+			alert("请选择下载类型！！");
+			return;
+		}
+		if($("#dirName").val() == ""){
+			alert("请输入远程文件夹名称！！");
+			return;
+		}
+		
+		var param = {
+				urls			:array,
+				toLocal			:[$('#downtype').val()],
+				dowloadPath		:[$("#dirName").val()]
+		}
+		$.ajax(
+                {
+                    url: '/pcw/shell/down/vipvideo',
+                    'data': JSON.stringify(param),
+                    'type': 'PUT',
+                    'processData': false,
+                    'contentType': 'application/json', 
+                    success: function (msg) {
+						$("#content").val("");
+						$("#dirName").val("");
+                    }
+                }
+            );
+	}
+</script>
+</head>
+<body>
+	<div class="out">
+		<select id="downtype">
+			<option value="">请选择</option>
+			<option value="remote">远程</option>
+			<option value="local">服务本机</option>
+		</select>
+		<input id="dirName" type="text" placeholder="请输入下载的目录名称">
+		<textarea rows="30" cols="85" class="content" id="content"></textarea>
+		<div style="height: 40px;">
+			<button onclick="saveInServer()">保存到服务端</button>
+		</div>
+	</div>
+</body>
+</html>
