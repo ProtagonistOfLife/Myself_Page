@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!--
+Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
+For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+-->
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>富文本编辑器</title>
+	<script src="../ckeditor.js"></script>
+	<script src="js/sample.js"></script>
+	<script src="/js/tools/utils.js"></script>
+	 <script type="text/javascript" src="/js/lib/jquery-1.8.3.min.js"></script>
+	 <script type="text/javascript" src="/js/tools/textoperate.js"></script>
+	<link rel="stylesheet" href="css/samples.css">
+	<link rel="stylesheet" href="toolbarconfigurator/lib/codemirror/neo.css">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<style type="text/css">
+		.block_center{
+			text-align: center;
+		}
+		.inline_block{
+			display: inline-block;
+			width:50px;
+			text-align: right;
+		}
+		
+	</style>
+</head>
+<body id="main">
+	<div class="block_center">
+		<span class="inline_block">标题：</span>
+		<input id="content_title" type="text">
+	</div>
+	<div class="block_center">
+		<span class="inline_block">url：</span>
+		<input id="urlInp" type="text">
+	</div>
+	<div class="block_center">
+		<button onclick="getPage()">获取页面</button>
+		<button onclick="save()">保存</button>
+	</div>
+	<div>
+		<div class="grid-container">
+			<div class="grid-width-100">
+				<div id="editor">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+<script>
+	$(function(){
+		var type = getQueryVariable("type");
+		var richid = getQueryVariable("richid");
+		
+		if(richid != null){
+			$.get("/pcw/data/richtext",{id:richid},function(result){
+				if(result.code == "200" && result.data != null){
+					var editorElement = CKEDITOR.document.getById('editor');
+					editorElement.setHtml(result.data.content);
+					$("#content_title").val(result.data.name);
+				}
+				initSample();
+				CKEDITOR.config.height = 300;
+			})
+		}else{
+			initSample();
+			CKEDITOR.config.height = 300;
+		}
+	})
+	
+	function save(){
+		console.log();
+		var richid = getQueryVariable("richid");
+		var content = document.getElementsByTagName('IFRAME')[0].contentWindow.document.body.innerHTML;
+		var param = {
+				name					:$("#content_title").val(),
+				content					:content,
+				typeid					:0
+		}
+		var url = null;
+		if(richid == null){
+			url = "/pcw/data/addrichtext";
+		}else{
+			param.id = richid;
+			url = "/pcw/data/updaterich";
+		}
+		$.post(url,param,function(result){
+			console.log(result);
+		})
+	}
+</script>
+</body>
+</html>
